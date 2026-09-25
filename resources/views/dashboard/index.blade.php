@@ -96,10 +96,38 @@
                 <span class="text-xs font-medium text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full">Riwayat Bayar</span>
             </div>
             <div>
-                <p class="text-sm text-gray-400 font-medium mb-1">Pembayaran Piutang</p>
+                <p class="text-sm text-gray-400 font-medium mb-1">Pembayaran</p>
                 <h3 class="text-xl sm:text-2xl font-bold text-gray-900">Rp {{ number_format($totalTerbayar,0,',','.') }}</h3>
             </div>
         </a>
+
+        <!-- Kartu 7: Plafon Piutang (Baru) -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between relative overflow-hidden">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
+                    <i class="fa-solid fa-chart-pie text-xl"></i>
+                </div>
+                <span class="text-xs font-medium text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Limit Plafon</span>
+            </div>
+            <div>
+                <p class="text-sm text-gray-400 font-medium mb-1">Plafon Piutang</p>
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-900">Rp {{ number_format($dashboard->plafon_piutang,0,',','.') }}</h3>
+            </div>
+        </div>
+
+        <!-- Kartu 8: Sisa Limit (Baru) -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between relative overflow-hidden">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                </div>
+                <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">Tersedia</span>
+            </div>
+            <div>
+                <p class="text-sm text-gray-400 font-medium mb-1">Sisa Limit</p>
+                <h3 class="text-xl sm:text-2xl font-bold text-emerald-600">Rp {{ number_format($sisaLimit,0,',','.') }}</h3>
+            </div>
+        </div>
 
     </div>
 

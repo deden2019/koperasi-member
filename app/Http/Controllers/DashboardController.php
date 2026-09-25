@@ -19,20 +19,22 @@ class DashboardController extends Controller
                 '=',
                 'j.customer_id'
             )
-            ->selectRaw('
-                c.kode_customer,
-                c.nama_customer,
-                COUNT(j.jual_id) jumlah_transaksi,
-                COALESCE(SUM(j.total_nota),0) total_belanja
-            ')
+->selectRaw('
+    c.kode_customer,
+    c.nama_customer,
+    c.plafon_piutang,
+    COUNT(j.jual_id) jumlah_transaksi,
+    COALESCE(SUM(j.total_nota),0) total_belanja
+')
             ->where(
                 'c.customer_id',
                 session('customer_id')
             )
-            ->groupBy(
-                'c.kode_customer',
-                'c.nama_customer'
-            )
+->groupBy(
+    'c.kode_customer',
+    'c.nama_customer',
+    'c.plafon_piutang'
+)
             ->first();
 
         // Belanja Bulan Ini
@@ -53,6 +55,7 @@ class DashboardController extends Controller
             ->where('customer_id', session('customer_id'))
             ->whereRaw('total_nota > total_pelunasan')
             ->sum(DB::raw('(total_nota - total_pelunasan)'));
+            $sisaLimit = ($dashboard->plafon_piutang ?? 0) - $totalPiutang;
 
         // Total Piutang Terbayar
         $totalTerbayar = DB::table('t_item_pembayaran_piutang_produk as p')
@@ -67,13 +70,14 @@ class DashboardController extends Controller
 
         return view(
             'dashboard.index',
-            compact(
-                'dashboard',
-                'bulanIni',
-                'transaksiTerakhir',
-                'totalPiutang',
-                'totalTerbayar'
-            )
+compact(
+    'dashboard',
+    'bulanIni',
+    'transaksiTerakhir',
+    'totalPiutang',
+    'totalTerbayar',
+    'sisaLimit'
+)
         );
     }
 }

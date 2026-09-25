@@ -17,13 +17,13 @@
     <header class="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             
-            <!-- Logo / Judul -->
+<!-- Logo / Judul -->
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg shadow-sm">
-                    <i class="fa-solid fa-store"></i>
+                <div class="w-10 h-10 rounded-xl overflow-hidden shadow-sm flex items-center justify-center bg-white">
+                    <img src="{{ asset('images/koperasi.png') }}" alt="Logo Koperasi" class="w-full h-full object-cover">
                 </div>
                 <h1 class="font-bold text-xl text-gray-900 tracking-tight">
-                    Member <span class="text-emerald-600">Koperasi</span>
+                    Kopkar <span class="text-emerald-600">RSPB</span>
                 </h1>
             </div>
 
