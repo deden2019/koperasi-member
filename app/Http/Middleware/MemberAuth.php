@@ -11,7 +11,7 @@ class MemberAuth
     public function handle(Request $request, Closure $next): Response
     {
         if (!session('customer_id')) {
-            return redirect('/');
+            return redirect('/login');
         }
 
         return $next($request);
