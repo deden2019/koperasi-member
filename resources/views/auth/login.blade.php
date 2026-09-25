@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ asset('images/koperasi.png') }}?v=1">
+<link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v=1">
     <title>Login Member Koperasi</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
