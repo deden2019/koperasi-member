@@ -56,40 +56,40 @@
                 @csrf
                 
                 <!-- PIN Lama -->
-                <div class="mb-5">
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">PIN Lama</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                            <i class="fa-solid fa-key text-sm"></i>
-                        </span>
-                        <input type="password" name="pin_lama" placeholder="Masukkan PIN lama Anda" required
-                            class="w-full bg-gray-50/50 border border-gray-200 rounded-2xl py-3 pl-11 pr-4 text-gray-900 text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition">
-                    </div>
-                </div>
+<div class="mb-5">
+    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">PIN Lama</label>
+    <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+            <i class="fa-solid fa-key text-sm"></i>
+        </span>
+        <input type="password" name="pin_lama" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="Masukkan PIN lama Anda" required
+            class="w-full bg-gray-50/50 border border-gray-200 rounded-2xl py-3 pl-11 pr-4 text-gray-900 text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition">
+    </div>
+</div>
 
-                <!-- PIN Baru -->
-                <div class="mb-5">
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">PIN Baru</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                            <i class="fa-solid fa-lock text-sm"></i>
-                        </span>
-                        <input type="password" name="pin_baru" placeholder="Masukkan PIN baru" required
-                            class="w-full bg-gray-50/50 border border-gray-200 rounded-2xl py-3 pl-11 pr-4 text-gray-900 text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition">
-                    </div>
-                </div>
+<!-- PIN Baru -->
+<div class="mb-5">
+    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">PIN Baru</label>
+    <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+            <i class="fa-solid fa-lock text-sm"></i>
+        </span>
+        <input type="password" name="pin_baru" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="Masukkan 6 digit PIN baru" required
+            class="w-full bg-gray-50/50 border border-gray-200 rounded-2xl py-3 pl-11 pr-4 text-gray-900 text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition">
+    </div>
+</div>
 
-                <!-- Konfirmasi PIN -->
-                <div class="mb-8">
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Konfirmasi PIN Baru</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-                            <i class="fa-solid fa-shield-halved text-sm"></i>
-                        </span>
-                        <input type="password" name="konfirmasi_pin" placeholder="Ulangi PIN baru Anda" required
-                            class="w-full bg-gray-50/50 border border-gray-200 rounded-2xl py-3 pl-11 pr-4 text-gray-900 text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition">
-                    </div>
-                </div>
+<!-- Konfirmasi PIN -->
+<div class="mb-8">
+    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Konfirmasi PIN Baru</label>
+    <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+            <i class="fa-solid fa-shield-halved text-sm"></i>
+        </span>
+        <input type="password" name="konfirmasi_pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="Ulangi 6 digit PIN baru Anda" required
+            class="w-full bg-gray-50/50 border border-gray-200 rounded-2xl py-3 pl-11 pr-4 text-gray-900 text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition">
+    </div>
+</div>
 
                 <!-- Tombol Submit -->
                 <button type="submit" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 text-sm">

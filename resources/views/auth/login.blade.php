@@ -58,13 +58,15 @@
                     <!-- Input Nomor HP / Telepon -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Nomor HP</label>
-                        <input 
-                            type="text" 
-                            name="telepon" 
-                            placeholder="Contoh: 081234567890" 
-                            required
-                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition"
-                        >
+                    <!-- Input Nomor HP yang disempurnakan -->
+                    <input 
+                        type="text" 
+                        name="telepon" 
+                        value="{{ old('telepon') }}"
+                        placeholder="Contoh: 081234567890" 
+                        required
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition"
+                    >
                     </div>
 
                     <!-- Input PIN -->
@@ -73,10 +75,14 @@
                             <label class="block text-sm font-semibold text-gray-700">PIN</label>
                             <a href="#" class="text-xs text-emerald-600 hover:underline font-medium">Lupa PIN?</a>
                         </div>
+                        <!-- Input PIN yang disempurnakan -->
                         <input 
                             type="password" 
                             name="pin" 
-                            placeholder="Masukkan PIN Anda" 
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            maxlength="6"
+                            placeholder="Masukkan 6 digit PIN Anda" 
                             required
                             class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition"
                         >

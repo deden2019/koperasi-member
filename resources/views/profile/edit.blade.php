@@ -20,7 +20,7 @@
         @if ($errors->any())
             <div class="mb-6 bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl text-sm">
                 <div class="font-bold mb-1 flex items-center gap-2">
-                    <i class="fa-solid fa-triangle-exclamation">></i> Terdapat kesalahan pengisian:
+                    <i class="fa-solid fa-triangle-exclamation"></i> Terdapat kesalahan pengisian:
                 </div>
                 <ul class="list-disc list-inside space-y-1">
                     @foreach ($errors->all() as $error)
@@ -45,6 +45,7 @@
                     </span>
                     <input 
                         type="text" 
+                        inputmode="tel"
                         name="telepon" 
                         value="{{ old('telepon', $customer->telepon) }}" 
                         class="w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 text-gray-900 text-sm transition"
