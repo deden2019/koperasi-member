@@ -1,146 +1,178 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-4xl mx-auto">
-        
-        <!-- ALERT SUCCESS JIKA ADA NOTIFIKASI -->
-        @if(session('success'))
-            <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl flex items-center gap-3 shadow-sm text-sm">
-                <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold flex-shrink-0">
-                    <i class="fa-solid fa-check"></i>
-                </div>
-                <div>
-                    <span class="font-bold block">Berhasil!</span>
-                    {{ session('success') }}
-                </div>
-            </div>
-        @endif
+<div class="max-w-5xl mx-auto px-4 py-6">
 
-        <!-- HEADER & TOMBOL KEMBALI -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-3xl shadow-sm mb-8 gap-4 border border-gray-100">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
-                    <i class="fa-solid fa-user"></i>
-                </div>
+    <!-- ALERT SUCCESS (Notification Tokopedia Style) -->
+    @if(session('success'))
+        <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl flex items-center justify-between shadow-sm text-sm">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
                 <div>
-                    <span class="text-xs font-bold tracking-wider text-emerald-600 uppercase">Informasi Akun</span>
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Profil Anggota</h2>
+                    <span class="font-bold">Berhasil!</span> {{ session('success') }}
                 </div>
             </div>
-
-            <!-- Tombol Aksi Cepat & Navigasi -->
-            <div class="flex flex-wrap items-center gap-2">
-                <a href="/card" class="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition text-sm shadow-lg shadow-emerald-600/20">
-                    <i class="fa-solid fa-id-card"></i> Kartu Digital
-                </a>
-                <a href="/dashboard" class="flex items-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition text-sm">
-                    <i class="fa-solid fa-arrow-left"></i> Dashboard
-                </a>
-            </div>
+            <button onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-800">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
+    @endif
 
-        <!-- KARTU KONTEN PROFIL -->
-        <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 mb-8">
-            <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-circle-info text-emerald-600"></i> Data Utama Anggota
-            </h3>
+    <!-- BREADCRUMB & HEADER -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <nav class="flex text-xs text-gray-500 mb-1 gap-2">
+                <a href="/dashboard" class="hover:text-emerald-600">Home</a>
+                <span>/</span>
+                <span class="text-gray-800 font-semibold">Profil Saya</span>
+            </nav>
+            <h1 class="text-2xl font-bold text-gray-900">Pengaturan Profil</h1>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/card" class="flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold rounded-lg text-sm transition border border-emerald-200">
+                <i class="fa-solid fa-id-card"></i> Kartu Digital
+            </a>
+            <a href="/dashboard" class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg text-sm transition">
+                <i class="fa-solid fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                <!-- Kode Anggota -->
-                <div class="p-5 rounded-2xl bg-gray-50/50 border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-400 mb-1 flex items-center gap-1.5">
-                        <i class="fa-solid fa-id-card text-emerald-600"></i> Kode Anggota
+    <!-- MAIN CONTAINER (LAYOUT 2 KOLOM TOKOPEDIA) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- KOLOM KIRI: AVATAR & AKSI CEPAT -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm text-center sticky top-6">
+                <!-- Foto Profil / Avatar -->
+                <div class="relative w-28 h-28 mx-auto mb-4">
+                    <div class="w-28 h-28 rounded-full bg-emerald-100 border-2 border-emerald-500 flex items-center justify-center text-emerald-700 text-4xl font-bold uppercase shadow-inner">
+                        {{ substr($customer->nama_customer, 0, 1) }}
+                    </div>
+                    <span class="absolute bottom-1 right-1 w-6 h-6 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center text-white text-xs" title="Anggota Aktif">
+                        <i class="fa-solid fa-check"></i>
                     </span>
-                    <span class="font-bold text-lg text-gray-900 tracking-wide">{{ $customer->kode_customer }}</span>
                 </div>
 
-                <!-- Nama -->
-                <div class="p-5 rounded-2xl bg-gray-50/50 border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-400 mb-1 flex items-center gap-1.5">
-                        <i class="fa-solid fa-user-tag text-emerald-600"></i> Nama Lengkap
-                    </span>
-                    <span class="font-bold text-lg text-gray-900">{{ $customer->nama_customer }}</span>
+                <h2 class="text-lg font-bold text-gray-900 mb-1">{{ $customer->nama_customer }}</h2>
+                <p class="text-xs text-gray-500 font-mono mb-3">ID: {{ $customer->kode_customer }}</p>
+
+                <!-- Status Badge -->
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold border border-emerald-200 mb-6">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Anggota Aktif
                 </div>
 
-                <!-- Telepon -->
-                <div class="p-5 rounded-2xl bg-gray-50/50 border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-400 mb-1 flex items-center gap-1.5">
-                        <i class="fa-solid fa-phone text-emerald-600"></i> Nomor Telepon
-                    </span>
-                    <span class="font-bold text-lg text-gray-900">{{ $customer->telepon }}</span>
-                </div>
+                <hr class="border-gray-100 mb-6">
 
-                <!-- Status Member -->
-                <div class="p-5 rounded-2xl bg-gray-50/50 border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-400 mb-1 flex items-center gap-1.5">
-                        <i class="fa-solid fa-shield-halved text-emerald-600"></i> Status Anggota
-                    </span>
-                    <div>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-100">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Aktif
+                <!-- Tombol Edit Profil -->
+                <a href="/profile/edit" class="w-full block bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition shadow-sm mb-3">
+                    <i class="fa-solid fa-pen-to-square mr-1.5"></i> Edit Profil
+                </a>
+
+                <!-- Info Tambahan -->
+                <div class="text-left text-xs text-gray-500 space-y-2 mt-4 pt-4 border-t border-gray-100">
+                    <div class="flex justify-between">
+                        <span>Terakhir Login:</span>
+                        <span class="font-medium text-gray-700">
+                            {{ isset($customer->last_login) ? date('d M Y H:i', strtotime($customer->last_login)) : '-' }}
                         </span>
                     </div>
                 </div>
-
-                <!-- Login Terakhir -->
-                <div class="p-5 rounded-2xl bg-gray-50/50 border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs font-medium text-gray-400 mb-1 flex items-center gap-1.5">
-                        <i class="fa-solid fa-clock text-emerald-600"></i> Login Terakhir
-                    </span>
-                    <span class="font-bold text-base text-gray-900">
-                        {{ isset($customer->last_login) ? date('d-m-Y H:i', strtotime($customer->last_login)) : '-' }}
-                    </span>
-                </div>
-
-                <!-- Alamat -->
-                <div class="p-5 rounded-2xl bg-gray-50/50 border border-gray-100 flex flex-col justify-between md:col-span-2">
-                    <span class="text-xs font-medium text-gray-400 mb-1 flex items-center gap-1.5">
-                        <i class="fa-solid fa-location-dot text-emerald-600"></i> Alamat Lengkap
-                    </span>
-                    <span class="font-bold text-base text-gray-900">{{ $customer->alamat }}</span>
-                </div>
-
             </div>
+        </div>
 
-            <!-- INFORMASI WILAYAH (Opsional jika datanya ada) -->
-            @if(isset($customer->provinsi) || isset($customer->kabupaten) || isset($customer->kecamatan) || isset($customer->kelurahan))
-                <div class="mt-8 pt-6 border-t border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <i class="fa-solid fa-map-location-dot text-emerald-600"></i> Wilayah Domisili
+        <!-- KOLOM KANAN: DETAIL DATA ANGGOTA -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- CARD 1: BIODATA DIRI -->
+            <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-100">
+                    <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                        <i class="fa-solid fa-user text-emerald-600"></i> Biodata Diri
                     </h3>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="p-4 rounded-xl bg-gray-50/50 border border-gray-100">
-                            <span class="text-xs text-gray-400 block mb-1">Provinsi</span>
-                            <span class="font-semibold text-gray-900 text-sm">{{ $customer->provinsi ?? '-' }}</span>
-                        </div>
-                        <div class="p-4 rounded-xl bg-gray-50/50 border border-gray-100">
-                            <span class="text-xs text-gray-400 block mb-1">Kabupaten/Kota</span>
-                            <span class="font-semibold text-gray-900 text-sm">{{ $customer->kabupaten ?? '-' }}</span>
-                        </div>
-                        <div class="p-4 rounded-xl bg-gray-50/50 border border-gray-100">
-                            <span class="text-xs text-gray-400 block mb-1">Kecamatan</span>
-                            <span class="font-semibold text-gray-900 text-sm">{{ $customer->kecamatan ?? '-' }}</span>
-                        </div>
-                        <div class="p-4 rounded-xl bg-gray-50/50 border border-gray-100">
-                            <span class="text-xs text-gray-400 block mb-1">Kelurahan</span>
-                            <span class="font-semibold text-gray-900 text-sm">{{ $customer->kelurahan ?? '-' }}</span>
-                        </div>
+                </div>
+
+                <div class="space-y-4 text-sm">
+                    <!-- Nama -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 items-center">
+                        <span class="text-gray-500">Nama Lengkap</span>
+                        <span class="sm:col-span-2 font-semibold text-gray-900">{{ $customer->nama_customer }}</span>
+                    </div>
+
+                    <!-- Kode Customer -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 items-center">
+                        <span class="text-gray-500">Kode Anggota</span>
+                        <span class="sm:col-span-2 font-semibold text-gray-900 font-mono">{{ $customer->kode_customer }}</span>
+                    </div>
+
+                    <!-- Status Anggota -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 items-center">
+                        <span class="text-gray-500">Status Keanggotaan</span>
+                        <span class="sm:col-span-2">
+                            <span class="text-emerald-600 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded text-xs border border-emerald-100">Verified Member</span>
+                        </span>
                     </div>
                 </div>
-            @endif
+            </div>
 
-            <!-- TOMBOL EDIT PROFIL -->
-            <div class="mt-8 pt-6 border-t border-gray-100 flex justify-end">
-                <div class="flex gap-3">
-                    <a href="/profile/edit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-3 rounded-xl flex items-center gap-2 transition text-sm shadow-md shadow-emerald-600/20">
-                        <i class="fa-solid fa-pen"></i> Edit Profil
-                    </a>
+            <!-- CARD 2: KONTAK & ALAMAT -->
+            <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-100">
+                    <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                        <i class="fa-solid fa-address-card text-emerald-600"></i> Kontak & Alamat
+                    </h3>
                 </div>
+
+                <div class="space-y-4 text-sm">
+                    <!-- Nomor Telepon -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 items-start">
+                        <span class="text-gray-500 pt-0.5">Nomor Telepon / WA</span>
+                        <div class="sm:col-span-2 flex items-center gap-2">
+                            <span class="font-semibold text-gray-900">{{ $customer->telepon ?? '-' }}</span>
+                            @if(!empty($customer->telepon))
+                                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Terverifikasi</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Alamat Utama -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 items-start">
+                        <span class="text-gray-500">Alamat Lengkap</span>
+                        <span class="sm:col-span-2 font-medium text-gray-800 leading-relaxed">{{ $customer->alamat ?? '-' }}</span>
+                    </div>
+                </div>
+
+                <!-- SUB-SECTION: WILAYAH DOMISILI -->
+                @if(isset($customer->provinsi) || isset($customer->kabupaten) || isset($customer->kecamatan) || isset($customer->kelurahan))
+                    <div class="mt-6 pt-5 border-t border-gray-100">
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Detail Wilayah Domisili</h4>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <span class="text-[11px] text-gray-400 block mb-0.5">Provinsi</span>
+                                <span class="font-semibold text-gray-800 text-xs truncate block">{{ $customer->provinsi ?? '-' }}</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <span class="text-[11px] text-gray-400 block mb-0.5">Kabupaten/Kota</span>
+                                <span class="font-semibold text-gray-800 text-xs truncate block">{{ $customer->kabupaten ?? '-' }}</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <span class="text-[11px] text-gray-400 block mb-0.5">Kecamatan</span>
+                                <span class="font-semibold text-gray-800 text-xs truncate block">{{ $customer->kecamatan ?? '-' }}</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                <span class="text-[11px] text-gray-400 block mb-0.5">Kelurahan</span>
+                                <span class="font-semibold text-gray-800 text-xs truncate block">{{ $customer->kelurahan ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
 
         </div>
 
     </div>
+
+</div>
 @endsection

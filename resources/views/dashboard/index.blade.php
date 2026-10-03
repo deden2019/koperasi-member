@@ -1,219 +1,266 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-7xl mx-auto">
-    
-    <!-- HEADER / SELAMAT DATANG -->
-    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-8 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl font-bold">
-            {{ strtoupper(substr($dashboard->nama_customer, 0, 1)) }}
-        </div>
-        <div>
-            <span class="text-xs font-bold tracking-wider text-emerald-600 uppercase">Selamat Datang,</span>
-            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $dashboard->nama_customer }}</h2>
+<div class="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+
+    <!-- 1. HEADER USER & RINGKASAN FINANSIAL -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-4 sm:p-6 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            
+            <!-- User Info -->
+            <div class="flex items-center gap-3 sm:gap-4">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-100 border-2 border-emerald-500 flex items-center justify-center text-emerald-700 font-bold text-xl sm:text-2xl flex-shrink-0 shadow-inner">
+                    {{ strtoupper(substr($dashboard->nama_customer, 0, 1)) }}
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-base sm:text-xl font-bold text-gray-900 leading-tight">
+                            {{ $dashboard->nama_customer }}
+                        </h1>
+                        <span class="bg-emerald-50 text-emerald-700 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                            Verified
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-500 font-mono mt-0.5">ID: {{ $dashboard->kode_customer }}</p>
+                </div>
+            </div>
+
+            <!-- Financial Summary Bar -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 bg-gray-50 p-2.5 sm:p-3 rounded-xl border border-gray-100">
+                <div class="px-2 border-r border-gray-200">
+                    <span class="text-[10px] sm:text-xs text-gray-500 block">Sisa Limit</span>
+                    <span class="text-xs sm:text-sm font-bold text-emerald-600 block truncate">
+                        Rp {{ number_format($sisaLimit, 0, ',', '.') }}
+                    </span>
+                </div>
+                <div class="px-2 border-r border-gray-200 sm:border-r-0 md:border-r">
+                    <span class="text-[10px] sm:text-xs text-gray-500 block">Sisa Tagihan</span>
+                    <span class="text-xs sm:text-sm font-bold text-rose-600 block truncate">
+                        Rp {{ number_format($totalPiutang, 0, ',', '.') }}
+                    </span>
+                </div>
+                <div class="col-span-2 sm:col-span-1 px-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-gray-200">
+                    <span class="text-[10px] sm:text-xs text-gray-500 block">Plafon Kredit</span>
+                    <span class="text-xs sm:text-sm font-bold text-gray-800 block truncate">
+                        Rp {{ number_format($dashboard->plafon_piutang, 0, ',', '.') }}
+                    </span>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- KARTU STATISTIK (GRID) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <!-- ==================== JUMBOTRON BANNER CAROUSEL (TOKOPEDIA STYLE) ==================== -->
+    <div class="relative group">
+        <div class="swiper bannerSwiper rounded-2xl overflow-hidden shadow-sm border border-gray-200">
+            <div class="swiper-wrapper">
+                
+                <!-- Slide 1: Promo / Info Limit -->
+                <div class="swiper-slide">
+                    <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-800 text-white p-6 sm:p-8 min-h-[160px] sm:min-h-[200px] flex items-center justify-between relative overflow-hidden">
+                        <div class="relative z-10 max-w-lg">
+                            <span class="bg-white/20 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-md uppercase tracking-wider mb-2 inline-block">
+                                Informasi Anggota
+                            </span>
+                            <h3 class="text-lg sm:text-2xl font-extrabold mb-1">Gunakan Limit Kredit Anda!</h3>
+                            <p class="text-xs sm:text-sm text-emerald-100 mb-4">Sisa limit belanja Anda sebesar <strong class="text-white">Rp {{ number_format($sisaLimit, 0, ',', '.') }}</strong> masih dapat digunakan.</p>
+                            <a href="/transaksi" class="inline-flex items-center gap-2 bg-white text-emerald-700 hover:bg-emerald-50 text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition shadow-sm">
+                                Belanja Sekarang <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        <!-- Hiasan Background Banner -->
+                        <div class="absolute -right-6 -bottom-8 opacity-20 text-white text-9xl pointer-events-none">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Cashier / Pembayaran -->
+                <div class="swiper-slide">
+                    <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 text-white p-6 sm:p-8 min-h-[160px] sm:min-h-[200px] flex items-center justify-between relative overflow-hidden">
+                        <div class="relative z-10 max-w-lg">
+                            <span class="bg-white/20 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-md uppercase tracking-wider mb-2 inline-block">
+                                Tagihan & Piutang
+                            </span>
+                            <h3 class="text-lg sm:text-2xl font-extrabold mb-1">Bayar Tagihan Lebih Praktis</h3>
+                            <p class="text-xs sm:text-sm text-blue-100 mb-4">Cek riwayat riwayat transaksi dan status pembayaran piutang Anda secara real-time.</p>
+                            <a href="/riwayat-pembayaran" class="inline-flex items-center gap-2 bg-white text-blue-700 hover:bg-blue-50 text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition shadow-sm">
+                                Cek Riwayat Bayar <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        <div class="absolute -right-6 -bottom-8 opacity-20 text-white text-9xl pointer-events-none">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Banner Gambar Custom (Opsional) -->
+                <div class="swiper-slide">
+                    <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white p-6 sm:p-8 min-h-[160px] sm:min-h-[200px] flex items-center justify-between relative overflow-hidden">
+                        <div class="relative z-10 max-w-lg">
+                            <span class="bg-white/20 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-md uppercase tracking-wider mb-2 inline-block">
+                                Keamanan Akun
+                            </span>
+                            <h3 class="text-lg sm:text-2xl font-extrabold mb-1">Lindungi Akun Anda</h3>
+                            <p class="text-xs sm:text-sm text-amber-100 mb-4">Perbarui PIN Anda secara berkala untuk menjaga keamanan transaksi keanggotaan.</p>
+                            <a href="/change-pin" class="inline-flex items-center gap-2 bg-white text-orange-700 hover:bg-orange-50 text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition shadow-sm">
+                                Ganti PIN <i class="fa-solid fa-shield-halved"></i>
+                            </a>
+                        </div>
+                        <div class="absolute -right-6 -bottom-8 opacity-20 text-white text-9xl pointer-events-none">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Pagination Dots (Titik Navigasi) -->
+            <div class="swiper-pagination !bottom-3"></div>
+
+            <!-- Navigasi Panah Kiri-Kanan (Muncul saat Hover Desktop) -->
+            <div class="swiper-button-prev !w-8 !h-8 !bg-white/80 hover:!bg-white !text-gray-800 rounded-full shadow-md after:!text-xs opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="swiper-button-next !w-8 !h-8 !bg-white/80 hover:!bg-white !text-gray-800 rounded-full shadow-md after:!text-xs opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </div>
+    </div>
+    <!-- ==================== END JUMBOTRON BANNER ==================== -->
+
+    <!-- 2. QUICK MENU / NAVIGASI CEPAT -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
+        <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Menu Utama</h2>
         
-        <!-- Kartu 1: Kode Anggota -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between relative overflow-hidden">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-                    <i class="fa-solid fa-id-card text-xl"></i>
+        <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center">
+            <a href="/transaksi" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition">
+                <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
+                    <i class="fa-solid fa-receipt"></i>
                 </div>
-                <span class="text-xs font-medium text-gray-400 bg-gray-50 px-2.5 py-1 rounded-full">ID Anggota</span>
-            </div>
-            <div>
-                <p class="text-sm text-gray-400 font-medium mb-1">Kode Anggota</p>
-                <h3 class="text-2xl font-bold text-gray-900 tracking-wide">{{ $dashboard->kode_customer }}</h3>
-            </div>
+                <span class="text-[11px] sm:text-xs font-semibold text-gray-700 leading-tight">Riwayat Transaksi</span>
+            </a>
+
+            <a href="/riwayat-pembayaran" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition">
+                <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                </div>
+                <span class="text-[11px] sm:text-xs font-semibold text-gray-700 leading-tight">Riwayat Bayar</span>
+            </a>
+
+            <a href="/profile" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition">
+                <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <span class="text-[11px] sm:text-xs font-semibold text-gray-700 leading-tight">Profil Saya</span>
+            </a>
+
+            <a href="/change-pin" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition">
+                <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-lg sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <span class="text-[11px] sm:text-xs font-semibold text-gray-700 leading-tight">Ganti PIN</span>
+            </a>
         </div>
-
-        <!-- Kartu 2: Jumlah Transaksi -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between relative overflow-hidden">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-amber-50 text-amber-600 rounded-2xl">
-                    <i class="fa-solid fa-receipt text-xl"></i>
-                </div>
-                <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">Aktivitas</span>
-            </div>
-            <div>
-                <p class="text-sm text-gray-400 font-medium mb-1">Jumlah Transaksi</p>
-                <h3 class="text-2xl font-bold text-gray-900">{{ $dashboard->jumlah_transaksi }} <span class="text-sm font-normal text-gray-500">kali</span></h3>
-            </div>
-        </div>
-
-        <!-- Kartu 3: Total Belanja -->
-        <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-6 rounded-3xl shadow-lg shadow-emerald-600/20 flex flex-col justify-between relative overflow-hidden">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-white/10 text-white rounded-2xl backdrop-blur-md">
-                    <i class="fa-solid fa-wallet text-xl"></i>
-                </div>
-                <span class="text-xs font-medium text-emerald-100 bg-white/10 px-2.5 py-1 rounded-full backdrop-blur-md">Total Pengeluaran</span>
-            </div>
-            <div>
-                <p class="text-sm text-emerald-100 font-medium mb-1">Total Belanja</p>
-                <h3 class="text-2xl sm:text-3xl font-bold tracking-tight">Rp {{ number_format($dashboard->total_belanja,0,',','.') }}</h3>
-            </div>
-        </div>
-
-        <!-- Kartu 4: Belanja Bulan Ini -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between relative overflow-hidden">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-purple-50 text-purple-600 rounded-2xl">
-                    <i class="fa-solid fa-calendar-days text-xl"></i>
-                </div>
-                <span class="text-xs font-medium text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full">Bulan Ini</span>
-            </div>
-            <div>
-                <p class="text-sm text-gray-400 font-medium mb-1">Belanja Bulan Ini</p>
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-900">Rp {{ number_format($bulanIni,0,',','.') }}</h3>
-            </div>
-        </div>
-
-        <!-- Kartu 5: Total Piutang -->
-        <a href="/piutang" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between relative overflow-hidden hover:shadow-md hover:border-rose-200 transition group">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl group-hover:scale-110 transition">
-                    <i class="fa-solid fa-file-invoice-dollar text-xl"></i>
-                </div>
-                <span class="text-xs font-medium text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full">Sisa Tagihan</span>
-            </div>
-            <div>
-                <p class="text-sm text-gray-400 font-medium mb-1">Total Piutang</p>
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-900">Rp {{ number_format($totalPiutang,0,',','.') }}</h3>
-            </div>
-        </a>
-
-        <!-- Kartu 6: Piutang Terbayar -->
-        <a href="/piutang/terbayar" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between relative overflow-hidden hover:shadow-md hover:border-teal-200 transition group">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-teal-50 text-teal-600 rounded-2xl group-hover:scale-110 transition">
-                    <i class="fa-solid fa-circle-check text-xl"></i>
-                </div>
-                <span class="text-xs font-medium text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full">Riwayat Bayar</span>
-            </div>
-            <div>
-                <p class="text-sm text-gray-400 font-medium mb-1">Pembayaran</p>
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-900">Rp {{ number_format($totalTerbayar,0,',','.') }}</h3>
-            </div>
-        </a>
-
-        <!-- Kartu 7: Plafon Piutang (Baru) -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between relative overflow-hidden">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
-                    <i class="fa-solid fa-chart-pie text-xl"></i>
-                </div>
-                <span class="text-xs font-medium text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Limit Plafon</span>
-            </div>
-            <div>
-                <p class="text-sm text-gray-400 font-medium mb-1">Plafon Piutang</p>
-                <h3 class="text-xl sm:text-2xl font-bold text-gray-900">Rp {{ number_format($dashboard->plafon_piutang,0,',','.') }}</h3>
-            </div>
-        </div>
-
-        <!-- Kartu 8: Sisa Limit (Baru) -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-between relative overflow-hidden">
-            <div class="flex justify-between items-start mb-4">
-                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
-                    <i class="fa-solid fa-shield-halved text-xl"></i>
-                </div>
-                <span class="text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">Tersedia</span>
-            </div>
-            <div>
-                <p class="text-sm text-gray-400 font-medium mb-1">Sisa Limit</p>
-                <h3 class="text-xl sm:text-2xl font-bold text-emerald-600">Rp {{ number_format($sisaLimit,0,',','.') }}</h3>
-            </div>
-        </div>
-
     </div>
 
-    <!-- TRANSAKSI TERAKHIR -->
+    <!-- 3. DETAIL STATISTIK KEUANGAN & AKTIVITAS -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="col-span-2 lg:col-span-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 sm:p-5 rounded-2xl shadow-sm relative overflow-hidden flex flex-col justify-between">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <span class="text-xs text-emerald-100 block font-medium">Akumulasi Belanja</span>
+                    <h3 class="text-xl sm:text-2xl font-extrabold tracking-tight mt-0.5">
+                        Rp {{ number_format($dashboard->total_belanja, 0, ',', '.') }}
+                    </h3>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+            </div>
+            <p class="text-[11px] text-emerald-100 flex items-center gap-1">
+                <i class="fa-solid fa-circle-check"></i> Total dari {{ $dashboard->jumlah_transaksi }}x transaksi
+            </p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-semibold text-gray-400">Bulan Ini</span>
+                <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-0.5">Pengeluaran</p>
+                <h4 class="text-sm sm:text-base font-bold text-gray-900 truncate">
+                    Rp {{ number_format($bulanIni, 0, ',', '.') }}
+                </h4>
+            </div>
+        </div>
+
+        <a href="/piutang/terbayar" class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm hover:border-teal-300 transition flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-semibold text-gray-400">Terbayar</span>
+                <i class="fa-solid fa-chevron-right text-[10px] text-gray-400"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-0.5">Total Bayar</p>
+                <h4 class="text-sm sm:text-base font-bold text-teal-600 truncate">
+                    Rp {{ number_format($totalTerbayar, 0, ',', '.') }}
+                </h4>
+            </div>
+        </a>
+    </div>
+
+    <!-- 4. BANNER TRANSAKSI TERAKHIR -->
     @if($transaksiTerakhir)
-    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-gray-50 text-gray-600 flex items-center justify-center text-lg">
+    <div class="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center flex-shrink-0 text-sm">
                 <i class="fa-solid fa-clock-rotate-left"></i>
             </div>
-            <div>
-                <span class="text-xs font-bold tracking-wider text-gray-400 uppercase">Transaksi Terakhir</span>
-                <h4 class="font-bold text-gray-900">Rp {{ number_format($transaksiTerakhir->total_nota,0,',','.') }}</h4>
+            <div class="truncate">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Transaksi Terakhir</span>
+                <h4 class="text-sm font-bold text-gray-900 truncate">
+                    Rp {{ number_format($transaksiTerakhir->total_nota, 0, ',', '.') }}
+                </h4>
             </div>
         </div>
-        <div class="text-sm text-gray-500 bg-gray-50 px-4 py-2 rounded-xl">
-            <i class="fa-regular fa-calendar mr-1.5 text-emerald-600"></i> {{ date('d-m-Y H:i', strtotime($transaksiTerakhir->tanggal)) }}
+        <div class="text-[11px] text-gray-500 bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-100 flex-shrink-0 whitespace-nowrap">
+            <i class="fa-regular fa-calendar text-emerald-600 mr-1"></i> 
+            {{ date('d/m/Y H:i', strtotime($transaksiTerakhir->tanggal)) }}
         </div>
     </div>
     @endif
 
-    <!-- MENU NAVIGASI UTAMA -->
-    <div class="mb-4 mt-10">
-        <h3 class="text-lg font-bold text-gray-900">Menu Navigasi</h3>
-        <p class="text-xs text-gray-400">Pilih menu di bawah untuk mengelola akun Anda.</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        
-        <!-- Menu 1: Riwayat Transaksi -->
-        <a href="/transaksi" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-100 transition flex items-center justify-between group">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg group-hover:scale-110 transition">
-                    <i class="fa-solid fa-receipt"></i>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900">Riwayat Transaksi</h4>
-                    <p class="text-sm text-gray-500">Lihat pembelian</p>
-                </div>
-            </div>
-            <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-blue-600 transition"></i>
-        </a>
-
-        <!-- Menu 2: Riwayat Pembayaran -->
-        <a href="/riwayat-pembayaran" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-100 transition flex items-center justify-between group">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg group-hover:scale-110 transition">
-                    <i class="fa-solid fa-money-bill-wave"></i>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900">Riwayat Pembayaran</h4>
-                    <p class="text-sm text-gray-500">Tunai, QRIS & Piutang</p>
-                </div>
-            </div>
-            <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-purple-600 transition"></i>
-        </a>
-
-        <!-- Menu 3: Profil Saya -->
-        <a href="/profile" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md hover:border-emerald-100 transition flex items-center justify-between group">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center text-lg group-hover:scale-110 transition">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900">Profil Saya</h4>
-                    <p class="text-sm text-gray-500">Data anggota</p>
-                </div>
-            </div>
-            <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-green-600 transition"></i>
-        </a>
-
-        <!-- Menu 4: Ganti PIN -->
-        <a href="/change-pin" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md hover:border-red-100 transition flex items-center justify-between group">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-lg group-hover:scale-110 transition">
-                    <i class="fa-solid fa-lock"></i>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900">Ganti PIN</h4>
-                    <p class="text-sm text-gray-500">Ubah PIN akun</p>
-                </div>
-            </div>
-            <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-red-600 transition"></i>
-        </a>
-
-    </div>
-
 </div>
+
+<!-- SCRIPT INISIALISASI SWIPER CAROUSEL -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var swiper = new Swiper(".bannerSwiper", {
+            spaceBetween: 16,
+            centeredSlides: true,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            loop: true,
+        });
+    });
+</script>
+
+<!-- Tambahkan kustomisasi warna bulatan pagination Swiper -->
+<style>
+    .swiper-pagination-bullet-active {
+        background-color: #ffffff !important;
+        width: 18px !important;
+        border-radius: 4px !important;
+    }
+    .swiper-pagination-bullet {
+        background-color: rgba(255, 255, 255, 0.6);
+    }
+</style>
 @endsection
