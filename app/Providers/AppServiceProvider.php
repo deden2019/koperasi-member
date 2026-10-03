@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL; // <--- PERHATIKAN BARIS INI WAJIB ADA DI SINI
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,9 +18,8 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-public function boot(): void
+    public function boot(): void
     {
-        // Paksa HTTPS di lingkungan production atau jika request secure
         if (config('app.env') === 'production' || request()->secure() || request()->header('X-Forwarded-Proto') === 'https') {
             URL::forceScheme('https');
         }
