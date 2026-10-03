@@ -11,11 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-->withMiddleware(function ($middleware) {
-    $middleware->alias([
-        'member.auth' => \App\Http\Middleware\MemberAuth::class,
-    ]);
-})
+    ->withMiddleware(function (Middleware $middleware) {
+        // 1. Tambahkan Trust Proxies agar Laravel membaca HTTPS dari Nginx
+        $middleware->trustProxies(at: '*');
+
+        // 2. Alias middleware milik Anda sebelumnya
+        $middleware->alias([
+            'member.auth' => \App\Http\Middleware\MemberAuth::class,
+        ]);
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
