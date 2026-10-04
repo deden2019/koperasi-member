@@ -25,26 +25,51 @@
                 </div>
             </div>
 
-            <!-- Financial Summary Bar -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 bg-gray-50 p-2.5 sm:p-3 rounded-xl border border-gray-100">
-                <div class="px-2 border-r border-gray-200">
-                    <span class="text-[10px] sm:text-xs text-gray-500 block">Sisa Limit</span>
-                    <span class="text-xs sm:text-sm font-bold text-emerald-600 block truncate">
-                        Rp {{ number_format($sisaLimit, 0, ',', '.') }}
-                    </span>
+            <!-- Financial Summary Bar & Action PDF -->
+            <div class="flex flex-col gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 bg-gray-50 p-2.5 sm:p-3 rounded-xl border border-gray-100">
+                    <div class="px-2 border-r border-gray-200">
+                        <span class="text-[10px] sm:text-xs text-gray-500 block">Sisa Limit</span>
+                        <span class="text-xs sm:text-sm font-bold text-emerald-600 block truncate">
+                            Rp {{ number_format($sisaLimit, 0, ',', '.') }}
+                        </span>
+                    </div>
+                    <div class="px-2 border-r border-gray-200 sm:border-r-0 md:border-r">
+                        <span class="text-[10px] sm:text-xs text-gray-500 block">Sisa Tagihan</span>
+                        <span class="text-xs sm:text-sm font-bold text-rose-600 block truncate">
+                            Rp {{ number_format($totalPiutang, 0, ',', '.') }}
+                        </span>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1 px-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-gray-200">
+                        <span class="text-[10px] sm:text-xs text-gray-500 block">Plafon Kredit</span>
+                        <span class="text-xs sm:text-sm font-bold text-gray-800 block truncate">
+                            Rp {{ number_format($dashboard->plafon_piutang, 0, ',', '.') }}
+                        </span>
+                    </div>
                 </div>
-                <div class="px-2 border-r border-gray-200 sm:border-r-0 md:border-r">
-                    <span class="text-[10px] sm:text-xs text-gray-500 block">Sisa Tagihan</span>
-                    <span class="text-xs sm:text-sm font-bold text-rose-600 block truncate">
-                        Rp {{ number_format($totalPiutang, 0, ',', '.') }}
-                    </span>
+
+                <!-- Tombol Action PDF Piutang (View & Download) -->
+                @if(isset($dashboard->file_pdf_piutang) && $dashboard->file_pdf_piutang)
+                <div class="flex items-center justify-end gap-2 pt-1">
+                    <span class="text-[11px] font-medium text-gray-500">File Piutang:</span>
+                    
+                    <!-- Tombol Lihat PDF -->
+                    <a href="{{ asset('storage/' . $dashboard->file_pdf_piutang) }}" 
+                       target="_blank" 
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-xs font-semibold transition shadow-sm">
+                        <i class="fa-solid fa-file-pdf text-red-500"></i>
+                        <span>Lihat PDF</span>
+                    </a>
+
+                    <!-- Tombol Download PDF -->
+                    <a href="{{ asset('storage/' . $dashboard->file_pdf_piutang) }}" 
+                       download 
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-semibold transition shadow-sm">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Download</span>
+                    </a>
                 </div>
-                <div class="col-span-2 sm:col-span-1 px-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-gray-200">
-                    <span class="text-[10px] sm:text-xs text-gray-500 block">Plafon Kredit</span>
-                    <span class="text-xs sm:text-sm font-bold text-gray-800 block truncate">
-                        Rp {{ number_format($dashboard->plafon_piutang, 0, ',', '.') }}
-                    </span>
-                </div>
+                @endif
             </div>
 
         </div>
@@ -68,7 +93,6 @@
                                 Belanja Sekarang <i class="fa-solid fa-arrow-right"></i>
                             </a>
                         </div>
-                        <!-- Hiasan Background Banner -->
                         <div class="absolute -right-6 -bottom-8 opacity-20 text-white text-9xl pointer-events-none">
                             <i class="fa-solid fa-wallet"></i>
                         </div>
@@ -83,7 +107,7 @@
                                 Tagihan & Piutang
                             </span>
                             <h3 class="text-lg sm:text-2xl font-extrabold mb-1">Bayar Tagihan Lebih Praktis</h3>
-                            <p class="text-xs sm:text-sm text-blue-100 mb-4">Cek riwayat riwayat transaksi dan status pembayaran piutang Anda secara real-time.</p>
+                            <p class="text-xs sm:text-sm text-blue-100 mb-4">Cek riwayat transaksi dan status pembayaran piutang Anda secara real-time.</p>
                             <a href="/riwayat-pembayaran" class="inline-flex items-center gap-2 bg-white text-blue-700 hover:bg-blue-50 text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition shadow-sm">
                                 Cek Riwayat Bayar <i class="fa-solid fa-arrow-right"></i>
                             </a>
@@ -94,7 +118,7 @@
                     </div>
                 </div>
 
-                <!-- Slide 3: Banner Gambar Custom (Opsional) -->
+                <!-- Slide 3: Keamanan -->
                 <div class="swiper-slide">
                     <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white p-6 sm:p-8 min-h-[160px] sm:min-h-[200px] flex items-center justify-between relative overflow-hidden">
                         <div class="relative z-10 max-w-lg">
@@ -115,50 +139,91 @@
 
             </div>
 
-            <!-- Pagination Dots (Titik Navigasi) -->
+            <!-- Pagination Dots -->
             <div class="swiper-pagination !bottom-3"></div>
 
-            <!-- Navigasi Panah Kiri-Kanan (Muncul saat Hover Desktop) -->
+            <!-- Navigasi Panah Kiri-Kanan -->
             <div class="swiper-button-prev !w-8 !h-8 !bg-white/80 hover:!bg-white !text-gray-800 rounded-full shadow-md after:!text-xs opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div class="swiper-button-next !w-8 !h-8 !bg-white/80 hover:!bg-white !text-gray-800 rounded-full shadow-md after:!text-xs opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </div>
     </div>
     <!-- ==================== END JUMBOTRON BANNER ==================== -->
-
-    <!-- 2. QUICK MENU / NAVIGASI CEPAT -->
-    <div class="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-        <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Menu Utama</h2>
+<!-- 2. QUICK MENU / NAVIGASI CEPAT -->
+<div class="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
+    <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Menu Utama</h2>
+    
+    <div class="grid grid-cols-5 gap-1.5 sm:gap-4 text-center">
         
-        <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center">
-            <a href="/transaksi" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition">
-                <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
-                    <i class="fa-solid fa-receipt"></i>
-                </div>
-                <span class="text-[11px] sm:text-xs font-semibold text-gray-700 leading-tight">Riwayat Transaksi</span>
-            </a>
+        <!-- 1. Riwayat Transaksi -->
+        <a href="/transaksi" class="flex flex-col items-center group p-1.5 sm:p-2 rounded-xl hover:bg-gray-50 transition">
+            <div class="w-10 h-10 sm:w-13 sm:h-13 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-base sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
+                <i class="fa-solid fa-receipt"></i>
+            </div>
+            <span class="text-[10px] sm:text-xs font-semibold text-gray-700 leading-tight">Riwayat Transaksi</span>
+        </a>
 
-            <a href="/riwayat-pembayaran" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition">
-                <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
-                    <i class="fa-solid fa-money-bill-wave"></i>
-                </div>
-                <span class="text-[11px] sm:text-xs font-semibold text-gray-700 leading-tight">Riwayat Bayar</span>
-            </a>
+        <!-- 2. Riwayat Bayar -->
+        <a href="/riwayat-pembayaran" class="flex flex-col items-center group p-1.5 sm:p-2 rounded-xl hover:bg-gray-50 transition">
+            <div class="w-10 h-10 sm:w-13 sm:h-13 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-base sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
+                <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
+            <span class="text-[10px] sm:text-xs font-semibold text-gray-700 leading-tight">Riwayat Bayar</span>
+        </a>
 
-            <a href="/profile" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition">
-                <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-                <span class="text-[11px] sm:text-xs font-semibold text-gray-700 leading-tight">Profil Saya</span>
-            </a>
+<!-- 3. TOMBOL DINAMIS: UPLOAD PDF (KHUSUS DEDEN 08115965955) / PDF PIUTANG (CLIENT) -->
+@php
+    // Ambil nomor telepon dari objek $dashboard yang sudah diambil di DashboardController
+    $userPhone = $dashboard->telepon 
+              ?? $dashboard->no_hp 
+              ?? $dashboard->hp 
+              ?? auth()->user()->telepon 
+              ?? session('telepon') 
+              ?? '';
 
-            <a href="/change-pin" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition">
-                <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-lg sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
-                    <i class="fa-solid fa-lock"></i>
-                </div>
-                <span class="text-[11px] sm:text-xs font-semibold text-gray-700 leading-tight">Ganti PIN</span>
-            </a>
+    // Bersihkan karakter selain angka
+    $cleanPhone = preg_replace('/[^0-9]/', '', $userPhone);
+
+    $hasPdf = isset($dashboard->file_pdf_piutang) && !empty($dashboard->file_pdf_piutang);
+@endphp
+
+@if($cleanPhone === '08115965955')
+    <!-- Tombol Upload PDF Khusus Admin Deden -->
+    <a href="{{ route('admin.upload-pdf.index') }}" 
+       class="flex flex-col items-center group p-1.5 sm:p-2 rounded-xl hover:bg-gray-50 transition">
+        <div class="w-10 h-10 sm:w-13 sm:h-13 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-base sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
         </div>
+        <span class="text-[10px] sm:text-xs font-semibold text-gray-700 leading-tight">Upload PDF</span>
+    </a>
+@else
+    <!-- Tombol Lihat PDF untuk Client / Member Biasa -->
+    <a href="{{ $hasPdf ? asset('storage/' . $dashboard->file_pdf_piutang) : 'javascript:void(0);' }}" 
+       @if($hasPdf) target="_blank" @else onclick="alert('File PDF Piutang belum tersedia/belum diunggah.')" @endif
+       class="flex flex-col items-center group p-1.5 sm:p-2 rounded-xl hover:bg-gray-50 transition">
+        <div class="w-10 h-10 sm:w-13 sm:h-13 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-base sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
+            <i class="fa-solid fa-file-pdf"></i>
+        </div>
+        <span class="text-[10px] sm:text-xs font-semibold text-gray-700 leading-tight">PDF Piutang</span>
+    </a>
+@endif
+        <!-- 4. Profil Saya -->
+        <a href="/profile" class="flex flex-col items-center group p-1.5 sm:p-2 rounded-xl hover:bg-gray-50 transition">
+            <div class="w-10 h-10 sm:w-13 sm:h-13 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <span class="text-[10px] sm:text-xs font-semibold text-gray-700 leading-tight">Profil Saya</span>
+        </a>
+
+        <!-- 5. Ganti PIN -->
+        <a href="/change-pin" class="flex flex-col items-center group p-1.5 sm:p-2 rounded-xl hover:bg-gray-50 transition">
+            <div class="w-10 h-10 sm:w-13 sm:h-13 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-base sm:text-xl mb-1.5 group-hover:scale-105 transition shadow-sm">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <span class="text-[10px] sm:text-xs font-semibold text-gray-700 leading-tight">Ganti PIN</span>
+        </a>
+
     </div>
+</div>
 
     <!-- 3. DETAIL STATISTIK KEUANGAN & AKTIVITAS -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -252,7 +317,6 @@
     });
 </script>
 
-<!-- Tambahkan kustomisasi warna bulatan pagination Swiper -->
 <style>
     .swiper-pagination-bullet-active {
         background-color: #ffffff !important;

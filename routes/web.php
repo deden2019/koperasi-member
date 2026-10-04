@@ -9,6 +9,7 @@ use App\Http\Controllers\PinController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\PiutangController;
 use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\AdminCustomerController;
 
 // 1. Landing Page Utama
 Route::get('/', function () {
@@ -47,4 +48,11 @@ Route::middleware('member.auth')->group(function () {
     Route::get('/piutang/terbayar', [PiutangController::class, 'terbayar'])->name('piutang.terbayar');
     Route::get('/riwayat-pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
 
-});
+    // 4. Khusus Admin Deden (Upload PDF Piutang)
+    Route::get('/admin/upload-pdf-piutang', [AdminCustomerController::class, 'indexUploadPdf'])->name('admin.upload-pdf.index');
+    Route::post('/admin/upload-pdf-piutang', [AdminCustomerController::class, 'storeUploadPdf'])->name('admin.upload-pdf.store');
+    Route::delete('/admin/upload-pdf-piutang/{id}', [App\Http\Controllers\AdminCustomerController::class, 'destroyUploadPdf'])->name('admin.upload-pdf.destroy');
+    Route::get('/admin/preview-pdf/{id}', [App\Http\Controllers\AdminCustomerController::class, 'previewPdf'])->name('admin.upload-pdf.preview');
+
+
+    });
