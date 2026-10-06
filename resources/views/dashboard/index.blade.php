@@ -35,10 +35,15 @@
                         </span>
                     </div>
                     <div class="px-2 border-r border-gray-200 sm:border-r-0 md:border-r">
-                        <span class="text-[10px] sm:text-xs text-gray-500 block">Sisa Tagihan</span>
-                        <span class="text-xs sm:text-sm font-bold text-rose-600 block truncate">
-                            Rp {{ number_format($totalPiutang, 0, ',', '.') }}
-                        </span>
+                        <a href="{{ route('piutang.index') }}" class="px-2 border-r border-gray-200 sm:border-r-0 md:border-r group block hover:bg-gray-100/80 rounded-lg p-1 transition cursor-pointer" title="Klik untuk lihat daftar piutang">
+    <div class="flex items-center justify-between">
+        <span class="text-[10px] sm:text-xs text-gray-500 block group-hover:text-emerald-600 transition">Sisa Tagihan</span>
+        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-400 group-hover:text-emerald-600"></i>
+    </div>
+    <span class="text-xs sm:text-sm font-bold text-rose-600 block truncate">
+        Rp {{ number_format($totalPiutang, 0, ',', '.') }}
+    </span>
+</a>
                     </div>
                     <div class="col-span-2 sm:col-span-1 px-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-gray-200">
                         <span class="text-[10px] sm:text-xs text-gray-500 block">Plafon Kredit</span>

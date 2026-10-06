@@ -18,6 +18,19 @@ class TransaksiController extends Controller
             $query->where('nota', 'like', '%' . $request->search . '%');
         }
 
+        // Filter berdasarkan Status (Semua Status, Belum Lunas, Lunas)
+        if ($request->has('status') && !empty($request->status)) {
+            $status = strtolower(trim($request->status));
+            
+            if ($status === 'belum lunas' || $status === 'belum_lunas') {
+                // Filter untuk transaksi yang belum lunas
+                $query->whereRaw('total_nota - COALESCE(total_pelunasan, 0) > 0');
+            } elseif ($status === 'lunas') {
+                // Filter untuk transaksi yang sudah lunas
+                $query->whereRaw('total_nota - COALESCE(total_pelunasan, 0) <= 0');
+            }
+        }
+
         $transaksi = $query->get();
 
         return view(
@@ -55,22 +68,21 @@ class TransaksiController extends Controller
             return redirect()->route('transaksi.index')->with('error', 'Transaksi tidak ditemukan.');
         }
 
-        // Tentukan metode pembayaran secara otomatis berdasarkan kolom yang ada di t_jual_produk
-        // Pada OpenRetail, jika ada sisa piutang / total_pelunasan < grand_total / tempo -> Potong Gaji / Kredit
+        // Tentukan status kredit / belum lunas berdasarkan sisa_nota atau total_pelunasan
         $isKredit = false;
 
-        if (isset($transaksi->is_kredit) && $transaksi->is_kredit) {
-            $isKredit = true;
-        } elseif (isset($transaksi->total_pelunasan) && isset($transaksi->grand_total) && ($transaksi->grand_total - $transaksi->total_pelunasan > 0)) {
+        if (isset($transaksi->total_pelunasan) && isset($transaksi->total_nota) && ($transaksi->total_nota - $transaksi->total_pelunasan > 0)) {
             $isKredit = true;
         } elseif (isset($transaksi->sisa_nota) && $transaksi->sisa_nota > 0) {
             $isKredit = true;
         }
 
-        // Simpan nama metode pembayaran ke properti dinamis
+        // Simpan nama metode pembayaran & status lunas ke properti dinamis
         $transaksi->nama_metode_pembayaran = $isKredit 
             ? 'Potong Gaji / Simpanan Koperasi' 
             : 'Tunai / Cash';
+
+        $transaksi->status_lunas = $isKredit ? 'BELUM LUNAS' : 'SELESAI';
 
         return view(
             'transaksi.show',
@@ -107,6 +119,19 @@ class TransaksiController extends Controller
                 'd.diskon'
             )
             ->get();
+
+        $isKredit = false;
+        if (isset($transaksi->total_pelunasan) && isset($transaksi->total_nota) && ($transaksi->total_nota - $transaksi->total_pelunasan > 0)) {
+            $isKredit = true;
+        } elseif (isset($transaksi->sisa_nota) && $transaksi->sisa_nota > 0) {
+            $isKredit = true;
+        }
+
+        $transaksi->nama_metode_pembayaran = $isKredit 
+            ? 'Potong Gaji / Simpanan Koperasi' 
+            : 'Tunai / Cash';
+
+        $transaksi->status_lunas = $isKredit ? 'BELUM LUNAS' : 'SELESAI';
 
         return view(
             'transaksi.print',

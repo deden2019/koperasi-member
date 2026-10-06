@@ -25,22 +25,29 @@
 <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-4">
     
     <!-- Tab Status Pesanan (Menggunakan Query Parameter 'status') -->
-    <div class="flex items-center gap-2 border-b border-gray-100 pb-3 overflow-x-auto text-xs sm:text-sm font-semibold text-gray-500 whitespace-nowrap scrollbar-none">
-        @php $status = request('status', 'semua'); @endphp
-        
-        <a href="{{ request()->fullUrlWithQuery(['status' => 'semua']) }}" 
-           class="px-4 py-1.5 rounded-full transition {{ $status == 'semua' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'hover:bg-gray-100 hover:text-gray-800' }}">
-           Semua Status
-        </a>
-        <a href="{{ request()->fullUrlWithQuery(['status' => 'belum_lunas']) }}" 
-           class="px-4 py-1.5 rounded-full transition {{ $status == 'belum_lunas' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'hover:bg-gray-100 hover:text-gray-800' }}">
-           Belum Lunas
-        </a>
-        <a href="{{ request()->fullUrlWithQuery(['status' => 'lunas']) }}" 
-           class="px-4 py-1.5 rounded-full transition {{ $status == 'lunas' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'hover:bg-gray-100 hover:text-gray-800' }}">
-           Lunas
-        </a>
-    </div>
+<!-- Tab Status Pesanan (Menggunakan Query Parameter 'status') -->
+<div class="flex items-center gap-2 border-b border-gray-100 pb-3 overflow-x-auto text-xs sm:text-sm font-semibold text-gray-500 whitespace-nowrap scrollbar-none">
+    @php 
+        // Default ke 'semua' jika parameter kosong
+        $status = request('status', 'semua'); 
+    @endphp
+    
+    <a href="{{ request()->fullUrlWithQuery(['status' => 'semua']) }}" 
+       class="px-4 py-1.5 rounded-full transition {{ in_array($status, ['semua', '']) ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'hover:bg-gray-100 hover:text-gray-800' }}">
+        Semua Status
+    </a>
+    
+    <!-- Ubah value 'belum_lunas' menjadi 'belum lunas' agar sesuai dengan pengecekan di controller -->
+    <a href="{{ request()->fullUrlWithQuery(['status' => 'belum lunas']) }}" 
+       class="px-4 py-1.5 rounded-full transition {{ $status == 'belum lunas' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'hover:bg-gray-100 hover:text-gray-800' }}">
+        Belum Lunas
+    </a>
+    
+    <a href="{{ request()->fullUrlWithQuery(['status' => 'lunas']) }}" 
+       class="px-4 py-1.5 rounded-full transition {{ $status == 'lunas' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'hover:bg-gray-100 hover:text-gray-800' }}">
+        Lunas
+    </a>
+</div>
 
     <!-- Form Input Search & Filter Tanggal -->
     <form action="{{ url()->current() }}" method="GET" class="flex flex-col sm:flex-row gap-3">

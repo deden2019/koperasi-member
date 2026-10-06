@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Kopkar RSPB' }}</title>
 
     <!-- Tailwind CSS CDN -->
@@ -37,14 +38,16 @@
     <link rel="icon" type="image/png" href="{{ asset('images/koperasi.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/koperasi.png') }}">
 
-    <!-- 4. Swiper CSS (Hanya jika Anda menggunakan Jumbotron Slide Show) -->
+    <!-- 4. Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <!-- 5. FontAwesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 6. Script Registrasi Service Worker -->
+    <!-- 6. Script Registrasi Service Worker & Push Subscription -->
     <script>
+        const VAPID_PUBLIC_KEY = 'BJsrN0v1CXHuB5CQc1dXDI5Kw0KiFgH99A48UDsALoAnEI1NEQB2r9IspRGvdNLaz0Lb87cFiR0zrKL4AjpX2cs'; // Ganti dengan Public Key VAPID Anda
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js')
@@ -56,6 +59,46 @@
                     });
             });
         }
+
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        async function subscribeUserToPush() {
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                const existingSubscription = await registration.pushManager.getSubscription();
+                
+                if (existingSubscription) {
+                    return; // Sudah berlangganan
+                }
+
+                const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: convertedVapidKey
+                });
+
+                // Kirim ke backend Laravel untuk disimpan ke database PostgreSQL
+                await fetch('/save-push-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(subscription)
+                });
+            } catch (error) {
+                console.error('Gagal melakukan subscribe push notification:', error);
+            }
+        }
     </script>
 </head>
 <body class="bg-[#F3F4F6] font-sans antialiased text-gray-800">
@@ -64,7 +107,6 @@
     
     <!-- HEADER / NAVBAR STYLE TOKOPEDIA -->
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-        <!-- Top Bar Desktop -->
         <div class="hidden md:block bg-gray-100 border-b border-gray-200 text-xs text-gray-500 py-1">
             <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
                 <div class="flex gap-4">
@@ -78,10 +120,7 @@
             </div>
         </div>
 
-        <!-- Main Navbar -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
-            
-            <!-- Logo / Judul -->
             <a href="/dashboard" class="flex items-center gap-2.5 shrink-0">
                 <div class="w-9 h-9 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-100 shadow-sm">
                     <img src="{{ asset('images/koperasi.png') }}" alt="Logo Koperasi" class="w-full h-full object-cover">
@@ -91,7 +130,6 @@
                 </h1>
             </a>
 
-            <!-- Search Bar khas Tokopedia -->
             <div class="flex-1 max-w-2xl relative">
                 <div class="relative flex items-center">
                     <input type="text" placeholder="Cari layanan, simpanan, atau produk..." 
@@ -100,19 +138,15 @@
                 </div>
             </div>
 
-            <!-- User Menu & Action Icons -->
             <div class="flex items-center gap-3 shrink-0">
-                <!-- Icon Notifikasi / Keranjang -->
                 <button onclick="requestNotificationPermission()" type="button" class="relative p-2 text-gray-600 hover:text-emerald-600 focus:outline-none" title="Aktifkan Notifikasi">
                     <i class="fa-regular fa-bell text-xl"></i>
-                    <!-- Dot merah status -->
                     <span id="notif-dot" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
 
                 @if(session('nama_customer'))
                     <div class="h-6 w-[1px] bg-gray-200 hidden sm:block"></div>
 
-                    <!-- User Info -->
                     <div class="hidden sm:flex items-center gap-2">
                         <div class="w-8 h-8 rounded-full bg-tokopedia-light text-tokopedia flex items-center justify-center text-xs font-bold border border-tokopedia/20">
                             {{ strtoupper(substr(session('nama_customer'), 0, 1)) }}
@@ -122,7 +156,6 @@
                         </span>
                     </div>
 
-                    <!-- Logout Button -->
                     <form action="/logout" method="POST" class="m-0">
                         @csrf
                         <button type="submit" title="Logout" class="flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-semibold text-xs transition">
@@ -131,7 +164,6 @@
                     </form>
                 @endif
             </div>
-
         </div>
     </header>
 
@@ -153,28 +185,21 @@
 
 </div>
 
-<!-- BOTTOM NAVIGATION MOBILE (Gaya Tokopedia App) -->
+<!-- BOTTOM NAVIGATION MOBILE -->
 <div class="fixed bottom-0 left-0 z-50 w-full bg-white border-t border-gray-200 md:hidden shadow-lg">
     <div class="grid h-14 grid-cols-3">
-        
-        <!-- Dashboard -->
         <a href="/dashboard" class="flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition {{ request()->is('dashboard') ? 'text-tokopedia font-bold' : 'text-gray-500 hover:text-gray-900' }}">
             <i class="fa-solid fa-house text-base"></i>
             <span>Beranda</span>
         </a>
-
-        <!-- Transaksi -->
         <a href="/transaksi" class="flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition {{ request()->is('transaksi*') ? 'text-tokopedia font-bold' : 'text-gray-500 hover:text-gray-900' }}">
             <i class="fa-solid fa-receipt text-base"></i>
             <span>Transaksi</span>
         </a>
-
-        <!-- Profil -->
         <a href="/profile" class="flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition {{ request()->is('profile*') ? 'text-tokopedia font-bold' : 'text-gray-500 hover:text-gray-900' }}">
             <i class="fa-solid fa-user text-base"></i>
             <span>Profil</span>
         </a>
-
     </div>
 </div>
 
@@ -188,11 +213,12 @@
         Notification.requestPermission().then(function (permission) {
             if (permission === 'granted') {
                 alert('Notifikasi berhasil diaktifkan!');
-                // Sembunyikan dot merah jika izin sudah diberikan
                 const dot = document.getElementById('notif-dot');
                 if(dot) dot.classList.add('hidden');
                 
-                // Coba tes tampilkan notifikasi lokal
+                // Daftarkan push subscription ke database PostgreSQL via backend
+                subscribeUserToPush();
+
                 if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                     navigator.serviceWorker.ready.then(function(reg) {
                         reg.showNotification("Kopkar RSPB", {
@@ -207,21 +233,19 @@
         });
     }
 
-    // Cek status saat halaman pertama kali dibuka
     document.addEventListener("DOMContentLoaded", function() {
         if ('Notification' in window && Notification.permission === 'granted') {
             const dot = document.getElementById('notif-dot');
             if(dot) dot.classList.add('hidden');
+            subscribeUserToPush(); // Sinkronisasi otomatis jika sudah pernah izinkan sebelumnya
         }
     });
 </script>
-
 
 <!-- ==================== MODAL AJAKAN INSTALL PWA ==================== -->
 <div id="pwa-install-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity duration-300">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-5 animate-slide-up">
         
-        <!-- Header Modal & Icon -->
         <div class="text-center space-y-3">
             <div class="w-16 h-16 bg-emerald-50 rounded-2xl mx-auto flex items-center justify-center p-2 border border-emerald-100 shadow-sm">
                 <img src="{{ asset('images/koperasi.png') }}" alt="Logo Koperasi" class="w-full h-full object-contain">
@@ -232,7 +256,6 @@
             </div>
         </div>
 
-        <!-- Keuntungan Install -->
         <div class="bg-gray-50 rounded-2xl p-3.5 space-y-2 border border-gray-100">
             <div class="flex items-center gap-3 text-xs text-gray-700">
                 <i class="fa-solid fa-bell text-tokopedia text-sm"></i>
@@ -248,7 +271,6 @@
             </div>
         </div>
 
-        <!-- Tombol Aksi -->
         <div class="space-y-2 pt-1">
             <button id="btn-install-pwa" onclick="installPWA()" class="w-full bg-tokopedia hover:bg-tokopedia-hover text-white font-bold py-3 px-4 rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2">
                 <i class="fa-solid fa-download"></i> Install Aplikasi Sekarang
@@ -261,39 +283,28 @@
     </div>
 </div>
 
-<!-- ==================== SCRIPT KONTROL LOGIKA PWA ==================== -->
 <script>
     let deferredPrompt;
 
-    // Fungsi untuk mengecek apakah aplikasi dibuka dalam mode PWA (Standalone/Installed)
     function isPWAInstalled() {
         return window.matchMedia('(display-mode: standalone)').matches || 
                window.navigator.standalone === true;
     }
 
-    // Fungsi untuk mengecek apakah modal sudah pernah muncul hari ini
     function isShownToday() {
         const lastShownDate = localStorage.getItem('pwa_modal_last_shown');
-        const today = new Date().toDateString(); // Mengambil format tanggal "Sat Oct 03 2026"
+        const today = new Date().toDateString();
         return lastShownDate === today;
     }
 
-    // 1. Tangkap Event PWA dari Browser
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
 
-        // JIKA sudah di-install PWA -> JANGAN TAMPILKAN
-        if (isPWAInstalled()) {
+        if (isPWAInstalled() || isShownToday()) {
             return;
         }
 
-        // JIKA diakses dari browser tapi SUDAH TAMPIL HARI INI -> JANGAN TAMPILKAN
-        if (isShownToday()) {
-            return;
-        }
-
-        // Tampilkan modal jika di browser biasa & belum pernah muncul hari ini
         setTimeout(() => {
             showInstallModal();
         }, 1000);
@@ -303,7 +314,6 @@
         const modal = document.getElementById('pwa-install-modal');
         if (modal) {
             modal.classList.remove('hidden');
-            // Simpan tanggal hari ini agar tidak muncul lagi di hari yang sama
             const today = new Date().toDateString();
             localStorage.setItem('pwa_modal_last_shown', today);
         }
@@ -314,7 +324,6 @@
         if (modal) modal.classList.add('hidden');
     }
 
-    // 2. Fungsi Tombol "Install Aplikasi Sekarang"
     function installPWA() {
         if (deferredPrompt) {
             deferredPrompt.prompt();
@@ -322,7 +331,9 @@
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
                     if ('Notification' in window) {
-                        Notification.requestPermission();
+                        Notification.requestPermission().then(permission => {
+                            if (permission === 'granted') subscribeUserToPush();
+                        });
                     }
                 }
                 deferredPrompt = null;
@@ -334,7 +345,6 @@
         }
     }
 
-    // Sembunyikan otomatis jika berhasil di-install
     window.addEventListener('appinstalled', () => {
         closeInstallModal();
     });

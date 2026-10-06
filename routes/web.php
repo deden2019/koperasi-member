@@ -10,6 +10,7 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\PiutangController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AdminCustomerController;
+    use App\Http\Controllers\PushSubscriptionController;
 
 // 1. Landing Page Utama
 Route::get('/', function () {
@@ -54,5 +55,8 @@ Route::middleware('member.auth')->group(function () {
     Route::delete('/admin/upload-pdf-piutang/{id}', [App\Http\Controllers\AdminCustomerController::class, 'destroyUploadPdf'])->name('admin.upload-pdf.destroy');
     Route::get('/admin/preview-pdf/{id}', [App\Http\Controllers\AdminCustomerController::class, 'previewPdf'])->name('admin.upload-pdf.preview');
 
+
+
+    Route::post('/save-push-subscription', [PushSubscriptionController::class, 'store']);
 
     });
