@@ -9,17 +9,20 @@ class PushSubscriptionController extends Controller
 {
     public function store(Request $request)
     {
-        // Ganti session('customer_id') dengan nama session login Anda yang sebenarnya
-        $customerId = session('nama_session_login_anda');   
+        // Mengambil ID dari session login yang sesuai dengan AuthController Anda
+        $customerId = session('customer_id'); 
+
+        if (!$customerId) {
+            return response()->json(['status' => 'Unauthorized - Belum Login'], 401);
+        }
 
         $subscription = $request->json()->all();
 
-        // Pastikan data endpoint ada
         if (!isset($subscription['endpoint'])) {
             return response()->json(['status' => 'error', 'message' => 'Endpoint tidak ditemukan'], 400);
         }
 
-        // Simpan atau update data ke tabel PostgreSQL
+        // Simpan atau update data ke PostgreSQL berdasarkan customer_id asli yang sedang login
         DB::table('push_subscriptions')->updateOrInsert(
             ['customer_id' => $customerId],
             [
