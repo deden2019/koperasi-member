@@ -9,8 +9,8 @@ class PushSubscriptionController extends Controller
 {
     public function store(Request $request)
     {
-        // Uji coba menggunakan ID statis (angka 1) dulu
-        $customerId = 1; 
+        // Ganti session('customer_id') dengan nama session login Anda yang sebenarnya
+        $customerId = session('nama_session_login_anda');   
 
         $subscription = $request->json()->all();
 
