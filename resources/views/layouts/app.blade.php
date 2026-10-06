@@ -44,19 +44,21 @@
     <!-- 5. FontAwesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 6. Script Registrasi Service Worker & Push Subscription -->
+  <!-- 6. Script Registrasi Service Worker & Push Subscription -->
     <script>
-        const VAPID_PUBLIC_KEY = 'BJsrN0v1CXHuB5CQc1dXDI5Kw0KiFgH99A48UDsALoAnEI1NEQB2r9IspRGvdNLaz0Lb87cFiR0zrKL4AjpX2cs'; // Ganti dengan Public Key VAPID Anda
+        const VAPID_PUBLIC_KEY = 'BJsrN0v1CXHuB5CQc1dXDI5Kw0KiFgH99A48UDsALoAnEI1NEQB2r9IspRGvdiR0zrKL4AjpX2cs';
 
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(function(reg) {
-                        console.log('Service Worker Registered!', reg);
-                    })
-                    .catch(function(err) {
-                        console.error('Service Worker Registration Failed!', err);
-                    });
+            window.addEventListener('load', async function() {
+                try {
+                    const reg = await navigator.serviceWorker.register('/service-worker.js');
+                    console.log('Service Worker Registered!', reg);
+                    
+                    // Panggil otomatis setelah Service Worker siap (atau pasang di event klik tombol Anda)
+                    await subscribeUserToPush();
+                } catch (err) {
+                    console.error('Service Worker Registration Failed!', err);
+                }
             });
         }
 
@@ -74,20 +76,28 @@
         async function subscribeUserToPush() {
             try {
                 const registration = await navigator.serviceWorker.ready;
-                const existingSubscription = await registration.pushManager.getSubscription();
                 
-                if (existingSubscription) {
-                    return; // Sudah berlangganan
+                // Minta izin notifikasi secara eksplisit ke browser/pengguna
+                const permissionResult = await Notification.requestPermission();
+                if (permissionResult !== 'granted') {
+                    console.log('Izin notifikasi ditolak oleh pengguna.');
+                    return;
                 }
 
-                const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
-                const subscription = await registration.pushManager.subscribe({
-                    userVisibleOnly: true,
-                    applicationServerKey: convertedVapidKey
-                });
+                let subscription = await registration.pushManager.getSubscription();
+                
+                if (!subscription) {
+                    const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+                    subscription = await registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: convertedVapidKey
+                    });
+                }
+
+                console.log('Mengirim subscription ke server...', subscription);
 
                 // Kirim ke backend Laravel untuk disimpan ke database PostgreSQL
-                await fetch('/save-push-subscription', {
+                const response = await fetch('/save-push-subscription', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -95,6 +105,10 @@
                     },
                     body: JSON.stringify(subscription)
                 });
+
+                const result = await response.json();
+                console.log('Respon server:', result);
+
             } catch (error) {
                 console.error('Gagal melakukan subscribe push notification:', error);
             }
