@@ -10,7 +10,7 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\PiutangController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AdminCustomerController;
-    use App\Http\Controllers\PushSubscriptionController;
+use App\Http\Controllers\PushSubscriptionController;
 
 // 1. Landing Page Utama
 Route::get('/', function () {
@@ -22,12 +22,16 @@ Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Route Simpan Push Subscription (Ditaruh DI LUAR middleware member.auth agar bisa diakses Service Worker)
+Route::post('/save-push-subscription', [PushSubscriptionController::class, 'store']);
+
+
 // 3. Area Khusus Member Terautentikasi
 Route::middleware('member.auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Transaksi (Lengkap dengan fitur Cetak Invoice Tokopedia Style)
+    // Transaksi
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
     Route::get('/transaksi/{jualId}', [TransaksiController::class, 'show'])->name('transaksi.show');
     Route::get('/transaksi/{jualId}/print', [TransaksiController::class, 'print'])->name('transaksi.print');
@@ -49,14 +53,10 @@ Route::middleware('member.auth')->group(function () {
     Route::get('/piutang/terbayar', [PiutangController::class, 'terbayar'])->name('piutang.terbayar');
     Route::get('/riwayat-pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
 
-    // 4. Khusus Admin Deden (Upload PDF Piutang)
+    // 4. Khusus Admin Deden
     Route::get('/admin/upload-pdf-piutang', [AdminCustomerController::class, 'indexUploadPdf'])->name('admin.upload-pdf.index');
     Route::post('/admin/upload-pdf-piutang', [AdminCustomerController::class, 'storeUploadPdf'])->name('admin.upload-pdf.store');
     Route::delete('/admin/upload-pdf-piutang/{id}', [App\Http\Controllers\AdminCustomerController::class, 'destroyUploadPdf'])->name('admin.upload-pdf.destroy');
     Route::get('/admin/preview-pdf/{id}', [App\Http\Controllers\AdminCustomerController::class, 'previewPdf'])->name('admin.upload-pdf.preview');
 
-
-
-    Route::post('/save-push-subscription', [PushSubscriptionController::class, 'store']);
-
-    });
+});
