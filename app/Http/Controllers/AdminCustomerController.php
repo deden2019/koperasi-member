@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Services\PushNotificationService;
+
+
 
 class AdminCustomerController extends Controller
 {
@@ -91,6 +94,13 @@ class AdminCustomerController extends Controller
                 ->update([
                     'file_pdf_piutang' => null,
                 ]);
+
+		PushNotificationService::send(
+    $customerId,
+    'Piutang Baru',
+    'Tagihan piutang terbaru sudah tersedia. Silakan cek aplikasi Kopkar RSPB.'
+);
+
 
             return back()->with('success', "File PDF piutang berhasil dihapus.");
         }

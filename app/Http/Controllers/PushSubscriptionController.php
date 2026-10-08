@@ -9,34 +9,62 @@ class PushSubscriptionController extends Controller
 {
     public function store(Request $request)
     {
-        // Mengambil ID dari session login, atau fallback ke 1 jika session belum terbaca di background
-        $customerId = session('customer_id') ?? 1;
+        try {
 
-        $subscription = $request->json()->all();
+            \Log::info('MASUK STORE PUSH');
 
-        // Pastikan endpoint ada
-        $endpoint = $subscription['endpoint'] ?? $request->input('endpoint');
-        
-        if (!$endpoint) {
-            return response()->json(['status' => 'error', 'message' => 'Endpoint tidak ditemukan'], 400);
+            $customerId = session('customer_id') ?? 1;
+
+            $subscription = $request->json()->all();
+
+            \Log::info('DATA SUBSCRIPTION', [
+                'customer_id' => $customerId,
+                'subscription' => $subscription
+            ]);
+
+            $endpoint = $subscription['endpoint'] ?? $request->input('endpoint');
+
+            if (!$endpoint) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Endpoint tidak ditemukan'
+                ], 400);
+            }
+
+            $keys = $subscription['keys'] ?? [];
+
+            $p256dh = $keys['p256dh'] ?? '';
+            $auth = $keys['auth'] ?? '';
+
+            DB::table('push_subscriptions')->updateOrInsert(
+                ['customer_id' => $customerId],
+                [
+                    'endpoint' => $endpoint,
+                    'keys_p256dh' => $p256dh,
+                    'keys_auth' => $auth,
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
+
+            \Log::info('BERHASIL SIMPAN PUSH');
+
+            return response()->json([
+                'status' => 'success'
+            ]);
+
+        } catch (\Throwable $e) {
+
+            \Log::error('PUSH ERROR', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        $keys = $subscription['keys'] ?? [];
-        $p256dh = $keys['p256dh'] ?? $request->input('keys_p256dh', '');
-        $auth = $keys['auth'] ?? $request->input('keys_auth', '');
-
-        // Simpan atau update data ke tabel PostgreSQL
-        DB::table('push_subscriptions')->updateOrInsert(
-            ['customer_id' => $customerId],
-            [
-                'endpoint' => $endpoint,
-                'keys_p256dh' => $p256dh,
-                'keys_auth' => $auth,
-                'updated_at' => now(),
-                'created_at' => now(),
-            ]
-        );
-
-        return response()->json(['status' => 'success', 'customer_id' => $customerId]);
     }
 }

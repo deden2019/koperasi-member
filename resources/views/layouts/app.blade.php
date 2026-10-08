@@ -46,7 +46,7 @@
 
   <!-- 6. Script Registrasi Service Worker & Push Subscription -->
     <script>
-        const VAPID_PUBLIC_KEY = 'BJsrN0v1CXHuB5CQc1dXDI5Kw0KiFgH99A48UDsALoAnEI1NEQB2r9IspRGvdiR0zrKL4AjpX2cs';
+ 	const VAPID_PUBLIC_KEY= 'BECP3tGVssZiUTBVLFVwOJe6lVZPtF8lj41YMOL84KyuJiAVmyfasANP8AdIeNL2NhZWlXDKGyet4UXNUZX2QDY';
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async function() {

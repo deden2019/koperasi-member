@@ -11,6 +11,11 @@ use App\Http\Controllers\PiutangController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AdminCustomerController;
 use App\Http\Controllers\PushSubscriptionController;
+use Illuminate\Support\Facades\DB;
+use Minishlink\WebPush\WebPush;
+use Minishlink\WebPush\Subscription;
+
+
 
 // 1. Landing Page Utama
 Route::get('/', function () {
@@ -25,6 +30,51 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Route Simpan Push Subscription (Ditaruh DI LUAR middleware member.auth agar bisa diakses Service Worker)
 Route::post('/save-push-subscription', [PushSubscriptionController::class, 'store']);
 
+
+
+Route::get('/test-push', function () {
+
+    $row = DB::table('push_subscriptions')
+        ->latest('id')
+        ->first();
+
+    if (!$row) {
+        return 'Subscription tidak ditemukan';
+    }
+
+    $subscription = Subscription::create([
+        'endpoint' => $row->endpoint,
+        'publicKey' => $row->keys_p256dh,
+        'authToken' => $row->keys_auth,
+    ]);
+
+    $webPush = new WebPush([
+        'VAPID' => [
+            'subject' => 'mailto:admin@kopkarrspb.id',
+            'publicKey' => env('VAPID_PUBLIC_KEY'),
+            'privateKey' => env('VAPID_PRIVATE_KEY'),
+        ]
+    ]);
+
+    $payload = json_encode([
+        'title' => 'Test Push',
+        'body' => 'Notifikasi dari Laravel berhasil'
+    ]);
+
+    $report = null;
+
+    $webPush->queueNotification($subscription, $payload);
+
+    foreach ($webPush->flush() as $currentReport) {
+        $report = $currentReport;
+    }
+
+    if ($report && $report->isSuccess()) {
+        return 'SUCCESS';
+    }
+
+    return 'FAILED: '.($report ? $report->getReason() : 'Unknown error');
+});
 
 // 3. Area Khusus Member Terautentikasi
 Route::middleware('member.auth')->group(function () {
@@ -58,5 +108,9 @@ Route::middleware('member.auth')->group(function () {
     Route::post('/admin/upload-pdf-piutang', [AdminCustomerController::class, 'storeUploadPdf'])->name('admin.upload-pdf.store');
     Route::delete('/admin/upload-pdf-piutang/{id}', [App\Http\Controllers\AdminCustomerController::class, 'destroyUploadPdf'])->name('admin.upload-pdf.destroy');
     Route::get('/admin/preview-pdf/{id}', [App\Http\Controllers\AdminCustomerController::class, 'previewPdf'])->name('admin.upload-pdf.preview');
+
+
+
+
 
 });
