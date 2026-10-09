@@ -37,6 +37,12 @@ Route::post('/save-push-subscription', [PushSubscriptionController::class, 'stor
 
 Route::post('/api/send-transaction-notification', function (Request $request) {
 
+    \Log::info('TRANSAKSI NOTIF MASUK', [
+        'customer_id' => $request->customer_id,
+        'nota'        => $request->nota,
+        'total'       => $request->total
+    ]);
+
     PushNotificationService::send(
         $request->customer_id,
         'Belanja Berhasil',
