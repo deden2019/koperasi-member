@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\DB;
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
 
+use Illuminate\Http\Request;
+use App\Services\PushNotificationService;
+
 
 
 // 1. Landing Page Utama
@@ -29,6 +32,23 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Route Simpan Push Subscription (Ditaruh DI LUAR middleware member.auth agar bisa diakses Service Worker)
 Route::post('/save-push-subscription', [PushSubscriptionController::class, 'store']);
+
+
+
+Route::post('/api/send-transaction-notification', function (Request $request) {
+
+    PushNotificationService::send(
+        $request->customer_id,
+        'Belanja Berhasil',
+        'Nota ' . $request->nota .
+        ' sebesar Rp ' .
+        number_format($request->total, 0, ',', '.')
+    );
+
+    return response()->json([
+        'status' => 'success'
+    ]);
+});
 
 
 
