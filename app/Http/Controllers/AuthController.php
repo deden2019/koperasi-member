@@ -47,6 +47,15 @@ class AuthController extends Controller
         'kode_customer' => $customer->kode_customer,
     ]);
 
+    // ==========================================
+    // TAMBAHAN: FITUR "REMEMBER ME"
+    // ==========================================
+    if ($request->has('remember')) {
+        // Jika dicentang, buat cookie session bertahan selama 30 hari (43200 menit)
+        // meskipun 'expire_on_close' diaktifkan di config/session.php
+        cookie()->queue(config('session.cookie'), session()->getId(), 43200);
+    }
+
     $customer->last_login = now();
     $customer->save();
 

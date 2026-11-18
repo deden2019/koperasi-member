@@ -73,46 +73,49 @@
             return outputArray;
         }
 
-        async function subscribeUserToPush() {
-            try {
-                const registration = await navigator.serviceWorker.ready;
-                
-                // Minta izin notifikasi secara eksplisit ke browser/pengguna
-                const permissionResult = await Notification.requestPermission();
-                if (permissionResult !== 'granted') {
-                    console.log('Izin notifikasi ditolak oleh pengguna.');
-                    return;
-                }
 
-                let subscription = await registration.pushManager.getSubscription();
-                
-                if (!subscription) {
-                    const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
-                    subscription = await registration.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: convertedVapidKey
-                    });
-                }
+async function subscribeUserToPush() {
+    try {
 
-                console.log('Mengirim subscription ke server...', subscription);
+        const registration = await navigator.serviceWorker.ready;
 
-                // Kirim ke backend Laravel untuk disimpan ke database PostgreSQL
-                const response = await fetch('/save-push-subscription', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify(subscription)
-                });
+        const permissionResult = Notification.permission;
 
-                const result = await response.json();
-                console.log('Respon server:', result);
-
-            } catch (error) {
-                console.error('Gagal melakukan subscribe push notification:', error);
-            }
+        if (permissionResult !== 'granted') {
+            return;
         }
+
+        let subscription = await registration.pushManager.getSubscription();
+
+        if (!subscription) {
+            const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+
+            subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: convertedVapidKey
+            });
+        }
+
+        const response = await fetch('/save-push-subscription', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute('content')
+            },
+            body: JSON.stringify(subscription)
+        });
+
+        if (!response.ok) {
+            console.error('Gagal menyimpan subscription');
+        }
+
+    } catch (error) {
+        console.error('Gagal melakukan subscribe push notification:', error);
+    }
+}
+
     </script>
 </head>
 <body class="bg-[#F3F4F6] font-sans antialiased text-gray-800">
@@ -218,7 +221,9 @@
 </div>
 
 <script>
-    function requestNotificationPermission() {
+    
+
+	/*function requestNotificationPermission() {
         if (!('Notification' in window)) {
             alert('Browser ini tidak mendukung notifikasi.');
             return;
@@ -245,7 +250,41 @@
                 alert('Izin notifikasi ditolak. Anda bisa mengizinkannya via Pengaturan Browser.');
             }
         });
+    }*/
+
+
+function requestNotificationPermission() {
+
+    if (!('Notification' in window)) {
+        alert('Browser ini tidak mendukung notifikasi.');
+        return;
     }
+
+    Notification.requestPermission().then(function(permission) {
+
+        if (permission === 'granted') {
+
+            alert('Notifikasi berhasil diaktifkan!');
+
+            const dot = document.getElementById('notif-dot');
+            if (dot) dot.classList.add('hidden');
+
+            subscribeUserToPush();
+
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.ready.then(function(reg) {
+                    reg.showNotification('Kopkar RSPB', {
+                        body: 'Notifikasi aplikasi berhasil diaktifkan!',
+                        icon: '/images/koperasi.png'
+                    });
+                });
+            }
+        } else if (permission === 'denied') {
+            alert('Izin notifikasi ditolak.');
+        }
+    });
+}
+
 
     document.addEventListener("DOMContentLoaded", function() {
         if ('Notification' in window && Notification.permission === 'granted') {

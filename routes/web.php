@@ -21,8 +21,13 @@ use App\Services\PushNotificationService;
 
 
 // 1. Landing Page Utama
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+
+// 1. Redirect Halaman Utama Langsung ke Login
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 // 2. Rute Login & Logout Portal Member
@@ -33,28 +38,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Route Simpan Push Subscription (Ditaruh DI LUAR middleware member.auth agar bisa diakses Service Worker)
 Route::post('/save-push-subscription', [PushSubscriptionController::class, 'store']);
 
-
-
-Route::post('/api/send-transaction-notification', function (Request $request) {
-
-    \Log::info('TRANSAKSI NOTIF MASUK', [
-        'customer_id' => $request->customer_id,
-        'nota'        => $request->nota,
-        'total'       => $request->total
-    ]);
-
-    PushNotificationService::send(
-        $request->customer_id,
-        'Belanja Berhasil',
-        'Nota ' . $request->nota .
-        ' sebesar Rp ' .
-        number_format($request->total, 0, ',', '.')
-    );
-
-    return response()->json([
-        'status' => 'success'
-    ]);
-});
 
 
 
